@@ -16,7 +16,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(UserCredentials userCredentials) {
+    public void registerUser(UserCredentials userCredentials) {
         if (userRepository.existsByUsername(userCredentials.getUsername())) {
             throw new RuntimeException("Username already taken");
         }
@@ -29,6 +29,6 @@ public class UserService {
         user.setEmail(userCredentials.getEmail());
         user.setFirstName(userCredentials.getFirstName());
         user.setLastName(userCredentials.getLastName());
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 }
