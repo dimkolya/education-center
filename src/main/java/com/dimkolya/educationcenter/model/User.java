@@ -10,15 +10,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email"),
-        @UniqueConstraint(columnNames = "username")
-}, indexes = {
-        @Index(columnList = "creationTime"),
-        @Index(columnList = "username", unique = true),
-        @Index(columnList = "email", unique = true),
-})
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "email"),
+                @UniqueConstraint(columnNames = "username")
+        },
+        indexes = {
+                @Index(columnList = "creationTime"),
+                @Index(columnList = "username", unique = true),
+                @Index(columnList = "email", unique = true),
+        })
 public class User {
+    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -52,17 +55,18 @@ public class User {
     @Size(max = 80)
     private String password;
 
+    @NotNull
     @CreationTimestamp
     private Date creationTime;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"))
+    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Set<UserRole> roles = new HashSet<>();
 
-    @Column(nullable = false)
+    @NotNull
+    @Column
     private boolean enabled = false;
 
     public User() {
