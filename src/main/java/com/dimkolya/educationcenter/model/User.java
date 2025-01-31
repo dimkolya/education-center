@@ -2,13 +2,16 @@ package com.dimkolya.educationcenter.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NaturalId;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
@@ -21,43 +24,47 @@ import java.util.Set;
                 @Index(columnList = "email", unique = true),
         })
 public class User {
-    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Setter
     @NotBlank
-    @Size(max = 50)
+    @Size(min = 2, max = 50)
     @Pattern(regexp = "^\\p{L}+(?:[\\p{L}\\s'-]*\\p{L})?$", message = "Invalid first name")
+    @Column(nullable = false)
     private String firstName;
 
-    @NotNull
+    @Setter
     @NotBlank
-    @Size(max = 50)
+    @Size(min = 2, max = 50)
     @Pattern(regexp = "^\\p{L}+(?:[\\p{L}\\s'-]*\\p{L})?$", message = "Invalid last name")
+    @Column(nullable = false)
     private String lastName;
 
-    @NotNull
+    @Setter
     @NotBlank
     @Email
     @Size(max = 254)
-    @NaturalId
+    @Column(nullable = false)
     private String email;
 
-    @NotNull
+    @Setter
     @NotBlank
     @Size(min = 2, max = 20)
     @Pattern(regexp = "[a-zA-Z0-9]+", message = "Only Latin letters and digits expected")
+    @Column(nullable = false)
     private String username;
 
+    @Setter
     @NotNull
     @Size(max = 80)
+    @Column(nullable = false)
     private String password;
 
-    @NotNull
     @CreationTimestamp
-    private Date creationTime;
+    @Column(nullable = false, updatable = false)
+    private Instant creationTime;
 
     @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
@@ -65,19 +72,12 @@ public class User {
     @Column(name = "role")
     private Set<UserRole> roles = new HashSet<>();
 
+    @Setter
     @NotNull
-    @Column
+    @Column(nullable = false)
     private boolean enabled = false;
 
     public User() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Date getCreationTime() {
-        return creationTime;
     }
 
     public void addRole(UserRole role) {
@@ -86,58 +86,6 @@ public class User {
 
     public boolean hasRole(UserRole role) {
         return roles.contains(role);
-    }
-
-    public Set<UserRole> getRoles() {
-        return roles;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 }
 

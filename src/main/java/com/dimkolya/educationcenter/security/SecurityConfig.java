@@ -3,6 +3,7 @@ package com.dimkolya.educationcenter.security;
 import com.dimkolya.educationcenter.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,7 +48,14 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByUsername(username)
-                .map(CustomUserDetails::new)
+                .map(
+                        user -> {
+                            if (!user.isEnabled()) {
+                                throw new DisabledException("Account not verified");
+                            }
+                            return new CustomUserDetails(user);
+                        }
+                )
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 }

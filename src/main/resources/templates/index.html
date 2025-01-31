@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      lang="en">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
     <title>Education Center</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Welcome to Our Education Center!</h1>
-<div sec:authorize="isAuthenticated()">
-    <p>Welcome, <span sec:authentication="name"></span></p>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Logout</button>
-    </form>
-</div>
-<div sec:authorize="isAnonymous()">
-    <a th:href="@{/login}">Login</a> |
-    <a th:href="@{/register}">Register</a>
-</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Education Center</a>
+
+        <div sec:authorize="isAuthenticated()">
+                <span class="text-white me-3">Welcome,
+                    <span sec:authentication="name"></span>
+                </span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-light">Logout</button>
+            </form>
+        </div>
+
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}" class="btn btn-outline-light me-2">Login</a>
+            <a th:href="@{/register}" class="btn btn-outline-light">Register</a>
+        </div>
+    </div>
+</nav>
+
 </body>
 </html>
